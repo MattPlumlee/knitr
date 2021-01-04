@@ -141,11 +141,15 @@ hook_plot_tex = function(x, options) {
       )
       fig2 = sprintf('%s\\end{%s}\n', cap, options$fig.env)
     }
-  } else if (pandoc_to(c('latex', 'beamer'))) {
+  } else if (pandoc_to(c('latex'))) {
     # use alignment environments for R Markdown latex output (\centering won't work)
     align.env = switch(a, left = 'flushleft', center = 'center', right = 'flushright')
     align1 = if (plot1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}', align.env)
     align2 = if (plot2) if (a == 'default') '' else sprintf('\\end{%s}\n\n', align.env)
+  } else if (pandoc_to(c('beamer'))) {
+    align.env = switch(a, left = 'flushleft', center = 'center', right = 'flushright')
+    align1 = if (plot1 & fig.cur == 1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}', align.env)
+    align2 = if (plot2 & fig.cur == fig.num) if (a == 'default' ) '' else sprintf('\\end{%s}\n\n', align.env)
   }
 
   ow = options$out.width
@@ -174,6 +178,14 @@ hook_plot_tex = function(x, options) {
         '\\includegraphics%s{%s} ', size,
         if (getOption('knitr.include_graphics.ext', FALSE)) x else sans_ext(x)
       )
+      if(pandoc_to(c('beamer'))){
+      if (fig.cur == fig.num) str1 = '\\includegraphics<%d->%s{%s} '
+      else str1 = '\\includegraphics<%d>%s{%s} '
+      res = sprintf(
+        str1, fig.cur, size,
+        if (getOption('knitr.include_graphics.ext', FALSE)) x else sans_ext(x)
+      )
+      }
       lnk = options$fig.link
       if (is.null(lnk) || is.na(lnk)) res else sprintf('\\href{%s}{%s}', lnk, res)
     },
