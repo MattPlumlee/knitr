@@ -144,12 +144,12 @@ hook_plot_tex = function(x, options) {
   } else if (pandoc_to(c('latex'))) {
     # use alignment environments for R Markdown latex output (\centering won't work)
     align.env = switch(a, left = 'flushleft', center = 'center', right = 'flushright')
-    align1 = if (plot1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}', align.env)
+    align1 = if (plot1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}\n', align.env)
     align2 = if (plot2) if (a == 'default') '' else sprintf('\\end{%s}\n\n', align.env)
   } else if (pandoc_to(c('beamer'))) {
     align.env = switch(a, left = 'flushleft', center = 'center', right = 'flushright')
-    align1 = if (plot1 & fig.cur == 1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}', align.env)
-    align2 = if (plot2 & fig.cur == fig.num) if (a == 'default' ) '' else sprintf('\\end{%s}\n\n', align.env)
+    align1 = if (plot1 & fig.cur == 1) if (a == 'default') '\n' else sprintf('\n\n\\begin{%s}\n', align.env)
+    align2 = if (plot2 & fig.cur == fig.num) if (a == 'default' ) '' else sprintf('\n\\end{%s}\n\n', align.env)
   }
 
   ow = options$out.width
@@ -175,12 +175,12 @@ hook_plot_tex = function(x, options) {
     } else {
       if (nzchar(size)) size = sprintf('[%s]', size)
       res = sprintf(
-        '\\includegraphics%s{%s} ', size,
+        '\\includegraphics%s{%s}', size,
         if (getOption('knitr.include_graphics.ext', FALSE)) x else sans_ext(x)
       )
       if(pandoc_to(c('beamer'))){
-      if (fig.cur == fig.num) str1 = '\\includegraphics<%d->%s{%s} '
-      else str1 = '\\includegraphics<%d>%s{%s} '
+      if (fig.cur == fig.num) str1 = '\\includegraphics<%d->%s{%s}%%\n'
+      else str1 = '\\includegraphics<%d>%s{%s}%%\n'
       res = sprintf(
         str1, fig.cur, size,
         if (getOption('knitr.include_graphics.ext', FALSE)) x else sans_ext(x)
@@ -202,7 +202,7 @@ hook_plot_tex = function(x, options) {
   k1 = paste0(col, '\\begin{kframe}\n')
   k2 = '\\end{kframe}'
   x = .rm.empty.envir(paste0(k1, x, k2))
-  size = if (options$size == 'normalsize') '' else sprintf('\\%s', options$size)
+  size = if (options$size == 'small') '' else sprintf('\\%s', options$size)
   if (!ai) x = sprintf('\\begin{knitrout}%s\n%s\n\\end{knitrout}', size, x)
   if (options$split) {
     name = fig_path('.tex', options, NULL)
