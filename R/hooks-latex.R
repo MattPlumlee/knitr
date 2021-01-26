@@ -179,7 +179,7 @@ hook_plot_tex = function(x, options) {
         if (getOption('knitr.include_graphics.ext', FALSE)) x else sans_ext(x)
       )
       if(pandoc_to(c('beamer'))){
-      if (fig.cur == fig.num) str1 = '\\includegraphics<%d->%s{%s}%%\n'
+      if (fig.cur == fig.num) str1 = '\\includegraphics<%d->%s{%s}\n'
       else str1 = '\\includegraphics<%d>%s{%s}%%\n'
       res = sprintf(
         str1, fig.cur, size,
